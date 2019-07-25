@@ -45,15 +45,6 @@ public class Logic {
 
     public boolean checkTableForWin(CharSequence[] selectedTable, CharSequence player) {
         boolean result = false;
-        /*if (table[0].getText().equals(player) && table[1].getText().equals(player) && table[2].getText().equals(player)
-                || table[3].getText().equals(player) && table[4].getText().equals(player) && table[5].getText().equals(player)
-                || table[6].getText().equals(player) && table[7].getText().equals(player) && table[8].getText().equals(player)
-                || table[0].getText().equals(player) && table[3].getText().equals(player) && table[6].getText().equals(player)
-                || table[1].getText().equals(player) && table[4].getText().equals(player) && table[7].getText().equals(player)
-                || table[2].getText().equals(player) && table[5].getText().equals(player) && table[8].getText().equals(player)
-                || table[0].getText().equals(player) && table[4].getText().equals(player) && table[8].getText().equals(player)
-                || table[2].getText().equals(player) && table[4].getText().equals(player) && table[6].getText().equals(player))
-            result = true;*/
         if (selectedTable[0].equals(player) && selectedTable[1].equals(player) && selectedTable[2].equals(player)
                 || selectedTable[3].equals(player) && selectedTable[4].equals(player) && selectedTable[5].equals(player)
                 || selectedTable[6].equals(player) && selectedTable[7].equals(player) && selectedTable[8].equals(player)
@@ -84,6 +75,7 @@ public class Logic {
 
 
     public void pcTurn(String currentPlayer) {
+        //random PC
         /*List<Integer> emptyTable = emptyIndexies(getTable());
         if(emptyTable.size()>0){
             int turn = (int) (Math.random() * emptyTable.size());
@@ -100,25 +92,14 @@ public class Logic {
         }
 
         CharSequence[] origBoard = getTable();
-        CharSequence[] newBoard = Arrays.copyOf(origBoard, origBoard.length);
-
-        fc = 0;
-        int bestSpot = minimax(newBoard, aiPlayer);
+        int bestSpot = minimax(origBoard, aiPlayer);
         table[bestSpot].setText(currentPlayer);
-
 
     }
 
     private int minimax(CharSequence[] newBoard, String player) {
-
-        //add one to function calls
-        fc++;
-        int result;
-
-
         //available spots
         List<Integer> availSpots = emptyIndexies(newBoard);
-
         if (checkTableForWin(newBoard, huPlayer)) {
             score = -10;
         } else if (checkTableForWin(newBoard, aiPlayer)) {
@@ -126,40 +107,29 @@ public class Logic {
         } else if (availSpots.size() == 0) {
             score = 0;
         }
-
         // an array to collect all the objects
-
-
         // loop through available spots
         for (int i = 0; i < availSpots.size(); i++) {
-
             //create an object for each and store the index of that spot that was stored as a number in the object's index key
-            //Move move = new Move();
             // set the empty spot to the current player
             newBoard[availSpots.get(i)] = player;
             //if collect the score resulted from calling minimax on the opponent of the current player
-
             Move move = new Move();
             move.index = availSpots.get(i);
             move.score = score;
             if (player.equals(aiPlayer)) {
-                //move.score = score;
                 minimax(newBoard, huPlayer);
             } else {
-                //move.score = score;
                 minimax(newBoard, aiPlayer);
             }
             //reset the spot to empty
             //newBoard[availSpots.get(i)] = move.index;
             newBoard[availSpots.get(i)] = "";
-
             // push the object to the array
-            Log.i("Movesss - move", move.toString());
             moves.add(move);
         }
 
 // if it is the computer's turn loop over the moves and choose the move with the highest score
-        Log.i("Movesss", moves.toString());
         int bestMove = -1;
         if (player.equals(aiPlayer)) {
             int bestScore = -10000;
@@ -170,7 +140,6 @@ public class Logic {
                 }
             }
         } else {
-
 // else loop over the moves and choose the move with the lowest score
             int bestScore = 10000;
             for (int i = 0; i < moves.size(); i++) {
@@ -180,14 +149,10 @@ public class Logic {
                 }
             }
         }
-
 // return the chosen move (object) from the array to the higher depth
-
         return moves.get(bestMove).index;
 
-
     }
-
 
     public CharSequence[] getTable() {
         CharSequence[] result = new CharSequence[9];
