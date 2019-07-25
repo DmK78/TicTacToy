@@ -92,12 +92,12 @@ public class Logic {
         }
 
         CharSequence[] origBoard = getTable();
-        int bestSpot = minimax(origBoard, aiPlayer);
+        int bestSpot = minimax(origBoard, aiPlayer, new Move());
         table[bestSpot].setText(currentPlayer);
 
     }
 
-    private int minimax(CharSequence[] newBoard, String player) {
+    private int minimax(CharSequence[] newBoard, String player, Move move) {
         //available spots
         List<Integer> availSpots = emptyIndexies(newBoard);
         if (checkTableForWin(newBoard, huPlayer)) {
@@ -114,19 +114,22 @@ public class Logic {
             // set the empty spot to the current player
             newBoard[availSpots.get(i)] = player;
             //if collect the score resulted from calling minimax on the opponent of the current player
-            if (player.equals(aiPlayer)) {
-                minimax(newBoard, huPlayer);
-            } else {
-                minimax(newBoard, aiPlayer);
-            }
-            Move move = new Move();
+
             move.index = availSpots.get(i);
             move.score = score;
+            Log.i("Movesss-move", move.toString());
+
+            if (player.equals(aiPlayer)) {
+                minimax(newBoard, huPlayer, move);
+            } else {
+                minimax(newBoard, aiPlayer, move);
+            }
             //reset the spot to empty
             //newBoard[availSpots.get(i)] = move.index;
             newBoard[availSpots.get(i)] = "";
             // push the object to the array
             moves.add(move);
+            Log.i("Movesss-moves", moves.toString());
         }
 
 // if it is the computer's turn loop over the moves and choose the move with the highest score
