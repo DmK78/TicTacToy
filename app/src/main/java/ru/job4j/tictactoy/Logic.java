@@ -114,14 +114,14 @@ public class Logic {
             // set the empty spot to the current player
             newBoard[availSpots.get(i)] = player;
             //if collect the score resulted from calling minimax on the opponent of the current player
-            Move move = new Move();
-            move.index = availSpots.get(i);
-            move.score = score;
             if (player.equals(aiPlayer)) {
                 minimax(newBoard, huPlayer);
             } else {
                 minimax(newBoard, aiPlayer);
             }
+            Move move = new Move();
+            move.index = availSpots.get(i);
+            move.score = score;
             //reset the spot to empty
             //newBoard[availSpots.get(i)] = move.index;
             newBoard[availSpots.get(i)] = "";
