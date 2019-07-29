@@ -4,7 +4,6 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,7 +93,7 @@ public class Logic {
 
     }
 
-    private String changePlayer(String player) {
+    private String switchPlayer(String player) {
         if (player.equals("X")) {
             player = "O";
         } else {
@@ -102,74 +101,75 @@ public class Logic {
         }
         return player;
     }
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     private int minimax(CharSequence[] newBoard, String player) {
         int result = -1;
-//счетчик глубины ходов
+        //счетчик глубины ходов
         int count = 0;
-
-        int index = 0;
+        int firstMoveIndex = 0;
+        List<Integer> movesLeft = getEmptyIndexies(newBoard);
+        // активация защиты, если следующий ход приведет к победе человека, то нужно занять эту клетку
+        for (int def = 0; def < movesLeft.size(); def++) {
+            newBoard[movesLeft.get(def)] = huPlayer;
+            if (checkTableForWin(newBoard, huPlayer)) {
+                return movesLeft.get(def);
+            }
+            newBoard[movesLeft.get(def)] = "";
+        }
         //занимаем середину, если она пустая.
         if (newBoard[4].equals("")) {
             return 4;
         }
-        List<Integer> movesLeft = getEmptyIndexies(newBoard);
+        // берем по одной свободной ячкйке outerLoop, затем углубляемся с innerLoop
         for (int outerLoop = 0; outerLoop < movesLeft.size(); outerLoop++) {
-            // активация защиты, если следующий ход приведет к победе человека, то нужно занять эту клетку
-            List<Integer> arrayAttack = getEmptyIndexies(newBoard);
-            for (int def = 0; def < arrayAttack.size(); def++) {
-                newBoard[arrayAttack.get(def)] = huPlayer;
-                if (checkTableForWin(newBoard, huPlayer)) {
-                    return arrayAttack.get(def);
-                }
-                newBoard[arrayAttack.get(def)] = "";
-            }
             count++;
             newBoard[movesLeft.get(outerLoop)] = player;
-            index = movesLeft.get(outerLoop);
+            firstMoveIndex = movesLeft.get(outerLoop);
+            // проверяем, если хорд приводит к результату, то записываем его в moves
             if (checkTableForWin(newBoard, huPlayer)) {
-                score = -10;
-                moves.add(new Move(index, score, count));
+                moves.add(new Move(firstMoveIndex, -10, count));
                 newBoard[movesLeft.get(outerLoop)] = "";
+                continue;
             } else if (checkTableForWin(newBoard, aiPlayer)) {
-                score = 10;
-                moves.add(new Move(index, score, count));
+                moves.add(new Move(firstMoveIndex, 10, count));
                 newBoard[movesLeft.get(outerLoop)] = "";
+                continue;
+                // если первый ход привел к заполнению поля, записываем его
             } else if (getEmptyIndexies(newBoard).size() == 0) {
-                score = 0;
-                moves.add(new Move(index, score, count));
+                moves.add(new Move(firstMoveIndex, 0, count));
                 newBoard[movesLeft.get(outerLoop)] = "";
             } else {
-                player = changePlayer(player);
 
+                player = switchPlayer(player);
+                // создаем лист вложенных ходов, после добавления первого хода
                 List<Integer> innerMoves = getEmptyIndexies(newBoard);
-                Log.i("mini - innerMoves", innerMoves.toString());
                 for (int innerLoop = 0; innerLoop < innerMoves.size(); innerLoop++) {
                     count++;
                     newBoard[innerMoves.get(innerLoop)] = player;
                     if (checkTableForWin(newBoard, huPlayer)) {
-                        score = -10;
-                        moves.add(new Move(index, score, count));
+                        moves.add(new Move(firstMoveIndex, -10, count));
                         newBoard[movesLeft.get(outerLoop)] = "";
-                        player = changePlayer(player);
+                        player = switchPlayer(player);
                         break;
                     } else if (checkTableForWin(newBoard, aiPlayer)) {
-                        score = 10;
-                        moves.add(new Move(index, score, count));
+                        moves.add(new Move(firstMoveIndex, 10, count));
                         newBoard[movesLeft.get(outerLoop)] = "";
-                        player = changePlayer(player);
+                        player = switchPlayer(player);
                         break;
                     } else if (getEmptyIndexies(newBoard).size() == 0) {
-                        score = 0;
-                        moves.add(new Move(index, score, count));
+                        moves.add(new Move(firstMoveIndex, 0, count));
                     } else {
-                        player = changePlayer(player);
+                        player = switchPlayer(player);
                     }
                 }
+                //зачищаем сделанные ходы
                 count = 0;
                 for (int o : innerMoves) {
                     newBoard[o] = "";
                 }
+                newBoard[movesLeft.get(outerLoop)] = "";
+                player = switchPlayer(player);
             }
         }
         int min = 10000;
@@ -185,13 +185,9 @@ public class Logic {
                     resultMovie = move;
                 }
             }
-
         }
-
         return resultMovie.index;
     }
-
-
 
     public CharSequence[] getTable() {
         CharSequence[] result = new CharSequence[9];
@@ -200,6 +196,5 @@ public class Logic {
         }
         return result;
     }
-
 
 }
