@@ -71,6 +71,7 @@ public class Logic {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void pcTurn(String currentPlayer) {
         //random PC
         /*List<Integer> emptyTable = emptyIndexies(getTable());
