@@ -1,5 +1,6 @@
 package ru.job4j.tictactoy;
 
+import android.annotation.TargetApi;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
@@ -75,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @TargetApi(Build.VERSION_CODES.N)
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void answer(View view) {
         Button button = (Button) view;
         if (this.checkState() && !button.getText().equals("O") && !button.getText().equals("X") && !checkWinner()) {
@@ -90,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.N)
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private void pcTurn() {
         logic.pcTurn(currentPlayer);
         if (!checkWinner() && checkState()) {
