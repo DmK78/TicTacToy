@@ -1,2 +1,2 @@
 # TicTacToy
-A simple game with AI
+Simple tic tac toe game. You can play with the computer
