@@ -12,10 +12,10 @@ import java.util.stream.Collectors;
 public class Logic {
     private final Button[] table;
     private int fc = 0;
-    String huPlayer;
-    String aiPlayer;
-    static List<Move> moves = new ArrayList<>();
-    int score;
+    private String huPlayer;
+    private String aiPlayer;
+    private static List<Move> moves = new ArrayList<>();
+    private int score;
 
     public Logic(Button[] table) {
         this.table = table;
