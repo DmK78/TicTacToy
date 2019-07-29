@@ -11,11 +11,9 @@ import java.util.stream.Collectors;
 
 public class Logic {
     private final Button[] table;
-    private int fc = 0;
     private String huPlayer;
     private String aiPlayer;
     private static List<Move> moves = new ArrayList<>();
-    private int score;
 
     public Logic(Button[] table) {
         this.table = table;
@@ -60,7 +58,7 @@ public class Logic {
         }
     }
 
-    public List<Integer> getEmptyIndexies(CharSequence[] table) {
+    private List<Integer> getEmptyIndexies(CharSequence[] table) {
         List<Integer> result = new ArrayList<>();
         for (int i = 0; i < table.length; i++) {
             if (table[i].equals("")) {

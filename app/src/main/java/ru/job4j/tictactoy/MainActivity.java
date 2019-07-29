@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
         Button button33 = findViewById(R.id.button33);
         switcher = findViewById(R.id.switchEnemy);
         switcher.setChecked(enemyHuman);
+
         cells = new Button[]{button11, button12, button13, button21, button22, button23, button31, button32, button33};
         if (savedInstanceState != null) {
             CharSequence[] symbols = savedInstanceState.getCharSequenceArray(SAVED_TABLE);
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
                 cells[i].setText(symbols[i]);
             }
         }
+
         logic = new Logic(cells);
     }
 
