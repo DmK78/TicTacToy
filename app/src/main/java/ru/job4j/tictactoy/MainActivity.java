@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
             if (!checkWinner()) {
                 checkState();
             }
-            if (!enemyHuman && !checkWinner()) {
+            if (!enemyHuman && !checkWinner() && checkState()) {
                 pcTurn();
                 changePlayer();
             }
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void pcTurn() {
         logic.pcTurn(currentPlayer);
-        if (!checkWinner()) {
+        if (!checkWinner() && checkState()) {
             checkState();
         }
 

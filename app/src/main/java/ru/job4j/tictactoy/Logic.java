@@ -1,15 +1,13 @@
 package ru.job4j.tictactoy;
 
-import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Logic {
@@ -17,7 +15,7 @@ public class Logic {
     private int fc = 0;
     String huPlayer;
     String aiPlayer;
-    List<Move> moves = new ArrayList<>();
+    static List<Move> moves = new ArrayList<>();
     int score;
 
     public Logic(Button[] table) {
@@ -63,7 +61,7 @@ public class Logic {
         }
     }
 
-    public List<Integer> emptyIndexies(CharSequence[] table) {
+    public List<Integer> getEmptyIndexies(CharSequence[] table) {
         List<Integer> result = new ArrayList<>();
         for (int i = 0; i < table.length; i++) {
             if (table[i].equals("")) {
@@ -84,78 +82,116 @@ public class Logic {
 
         moves.clear();
         if (currentPlayer.equals("X")) {
-            huPlayer = "O";
-            aiPlayer = currentPlayer;
-        } else {
-            huPlayer = currentPlayer;
             aiPlayer = "X";
+            huPlayer = "O";
+        } else {
+            aiPlayer = "O";
+            huPlayer = "X";
         }
-
         CharSequence[] origBoard = getTable();
-        int bestSpot = minimax(origBoard, aiPlayer, new Move());
+        int bestSpot = minimax(origBoard, aiPlayer);
         table[bestSpot].setText(currentPlayer);
 
     }
 
-    private int minimax(CharSequence[] newBoard, String player, Move move) {
-        //available spots
-        List<Integer> availSpots = emptyIndexies(newBoard);
-        if (checkTableForWin(newBoard, huPlayer)) {
-            score = -10;
-        } else if (checkTableForWin(newBoard, aiPlayer)) {
-            score = 10;
-        } else if (availSpots.size() == 0) {
-            score = 0;
-        }
-        // an array to collect all the objects
-        // loop through available spots
-        for (int i = 0; i < availSpots.size(); i++) {
-            //create an object for each and store the index of that spot that was stored as a number in the object's index key
-            // set the empty spot to the current player
-            newBoard[availSpots.get(i)] = player;
-            //if collect the score resulted from calling minimax on the opponent of the current player
-
-            move.index = availSpots.get(i);
-            move.score = score;
-            Log.i("Movesss-move", move.toString());
-
-            if (player.equals(aiPlayer)) {
-                minimax(newBoard, huPlayer, move);
-            } else {
-                minimax(newBoard, aiPlayer, move);
-            }
-            //reset the spot to empty
-            //newBoard[availSpots.get(i)] = move.index;
-            newBoard[availSpots.get(i)] = "";
-            // push the object to the array
-            moves.add(move);
-            Log.i("Movesss-moves", moves.toString());
-        }
-
-// if it is the computer's turn loop over the moves and choose the move with the highest score
-        int bestMove = -1;
-        if (player.equals(aiPlayer)) {
-            int bestScore = -10000;
-            for (int i = 0; i < moves.size(); i++) {
-                if (moves.get(i).score > bestScore) {
-                    bestScore = moves.get(i).score;
-                    bestMove = i;
-                }
-            }
+    private String changePlayer(String player) {
+        if (player.equals("X")) {
+            player = "O";
         } else {
-// else loop over the moves and choose the move with the lowest score
-            int bestScore = 10000;
-            for (int i = 0; i < moves.size(); i++) {
-                if (moves.get(i).score < bestScore) {
-                    bestScore = moves.get(i).score;
-                    bestMove = i;
+            player = "X";
+        }
+        return player;
+    }
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private int minimax(CharSequence[] newBoard, String player) {
+        int result = -1;
+//счетчик глубины ходов
+        int count = 0;
+
+        int index = 0;
+        //занимаем середину, если она пустая.
+        if (newBoard[4].equals("")) {
+            return 4;
+        }
+        List<Integer> movesLeft = getEmptyIndexies(newBoard);
+        for (int outerLoop = 0; outerLoop < movesLeft.size(); outerLoop++) {
+            // активация защиты, если следующий ход приведет к победе человека, то нужно занять эту клетку
+            List<Integer> arrayAttack = getEmptyIndexies(newBoard);
+            for (int def = 0; def < arrayAttack.size(); def++) {
+                newBoard[arrayAttack.get(def)] = huPlayer;
+                if (checkTableForWin(newBoard, huPlayer)) {
+                    return arrayAttack.get(def);
+                }
+                newBoard[arrayAttack.get(def)] = "";
+            }
+            count++;
+            newBoard[movesLeft.get(outerLoop)] = player;
+            index = movesLeft.get(outerLoop);
+            if (checkTableForWin(newBoard, huPlayer)) {
+                score = -10;
+                moves.add(new Move(index, score, count));
+                newBoard[movesLeft.get(outerLoop)] = "";
+            } else if (checkTableForWin(newBoard, aiPlayer)) {
+                score = 10;
+                moves.add(new Move(index, score, count));
+                newBoard[movesLeft.get(outerLoop)] = "";
+            } else if (getEmptyIndexies(newBoard).size() == 0) {
+                score = 0;
+                moves.add(new Move(index, score, count));
+                newBoard[movesLeft.get(outerLoop)] = "";
+            } else {
+                player = changePlayer(player);
+
+                List<Integer> innerMoves = getEmptyIndexies(newBoard);
+                Log.i("mini - innerMoves", innerMoves.toString());
+                for (int innerLoop = 0; innerLoop < innerMoves.size(); innerLoop++) {
+                    count++;
+                    newBoard[innerMoves.get(innerLoop)] = player;
+                    if (checkTableForWin(newBoard, huPlayer)) {
+                        score = -10;
+                        moves.add(new Move(index, score, count));
+                        newBoard[movesLeft.get(outerLoop)] = "";
+                        player = changePlayer(player);
+                        break;
+                    } else if (checkTableForWin(newBoard, aiPlayer)) {
+                        score = 10;
+                        moves.add(new Move(index, score, count));
+                        newBoard[movesLeft.get(outerLoop)] = "";
+                        player = changePlayer(player);
+                        break;
+                    } else if (getEmptyIndexies(newBoard).size() == 0) {
+                        score = 0;
+                        moves.add(new Move(index, score, count));
+                    } else {
+                        player = changePlayer(player);
+                    }
+                }
+                count = 0;
+                for (int o : innerMoves) {
+                    newBoard[o] = "";
                 }
             }
         }
-// return the chosen move (object) from the array to the higher depth
-        return moves.get(bestMove).index;
+        int min = 10000;
+        Move resultMovie = new Move();
+        List<Move> newMoves = moves.stream().filter(v -> v.score == 10).collect(Collectors.toList());
+        // если не найдены победные ходы, то берет первый ход из доступных
+        if (newMoves.size() == 0) {
+            resultMovie.index = getEmptyIndexies(newBoard).get(0);
+        } else {
+            for (Move move : newMoves) {
+                if (move.moves < min) {
+                    min = move.moves;
+                    resultMovie = move;
+                }
+            }
 
+        }
+
+        return resultMovie.index;
     }
+
+
 
     public CharSequence[] getTable() {
         CharSequence[] result = new CharSequence[9];
