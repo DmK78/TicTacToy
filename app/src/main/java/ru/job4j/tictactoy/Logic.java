@@ -2,35 +2,31 @@ package ru.job4j.tictactoy;
 
 import android.os.Build;
 import android.support.annotation.RequiresApi;
-import android.util.Log;
-import android.widget.Button;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Logic {
-    private final Button[] table;
+    private String[] table = new String[9];
     private String huPlayer;
     private String aiPlayer;
-    private static List<Move> moves = new ArrayList<>();
 
-    public Logic(Button[] table) {
+    public Logic(String[] table) {
         this.table = table;
     }
 
     public CharSequence[] getSymbols() {
         CharSequence[] result = new CharSequence[table.length];
         for (int i = 0; i < table.length; i++) {
-            result[i] = table[i].getText();
+            result[i] = table[i];
         }
         return result;
+
     }
 
     public boolean hasGap() {
         boolean result = false;
         for (int i = 0; i < table.length; i++) {
-            if (table[i].getText().equals("")) {
+            if (table[i].equals("")) {
                 result = true;
                 break;
             }
@@ -38,27 +34,32 @@ public class Logic {
         return result;
     }
 
-    public boolean checkTableForWin(CharSequence[] selectedTable, CharSequence player) {
+    public boolean checkTableForWin(String[] table, String player) {
         boolean result = false;
-        if (selectedTable[0].equals(player) && selectedTable[1].equals(player) && selectedTable[2].equals(player)
-                || selectedTable[3].equals(player) && selectedTable[4].equals(player) && selectedTable[5].equals(player)
-                || selectedTable[6].equals(player) && selectedTable[7].equals(player) && selectedTable[8].equals(player)
-                || selectedTable[0].equals(player) && selectedTable[3].equals(player) && selectedTable[6].equals(player)
-                || selectedTable[1].equals(player) && selectedTable[4].equals(player) && selectedTable[7].equals(player)
-                || selectedTable[2].equals(player) && selectedTable[5].equals(player) && selectedTable[8].equals(player)
-                || selectedTable[0].equals(player) && selectedTable[4].equals(player) && selectedTable[8].equals(player)
-                || selectedTable[2].equals(player) && selectedTable[4].equals(player) && selectedTable[6].equals(player))
+        if(table==null){
+            table=this.table;
+        }
+        if (table[0].equals(player) && table[1].equals(player) && table[2].equals(player)
+                || table[3].equals(player) && table[4].equals(player) && table[5].equals(player)
+                || table[6].equals(player) && table[7].equals(player) && table[8].equals(player)
+                || table[0].equals(player) && table[3].equals(player) && table[6].equals(player)
+                || table[1].equals(player) && table[4].equals(player) && table[7].equals(player)
+                || table[2].equals(player) && table[5].equals(player) && table[8].equals(player)
+                || table[0].equals(player) && table[4].equals(player) && table[8].equals(player)
+                || table[2].equals(player) && table[4].equals(player) && table[6].equals(player)) {
             result = true;
+        }
+
         return result;
     }
 
     public void clearTable() {
-        for (Button button : table) {
-            button.setText("");
+        for (int i = 0; i < table.length; i++) {
+            table[i] = "";
         }
     }
 
-    private List<Integer> getEmptyIndexies(CharSequence[] table) {
+    private List<Integer> getEmptyIndexies(String[] table) {
         List<Integer> result = new ArrayList<>();
         for (int i = 0; i < table.length; i++) {
             if (table[i].equals("")) {
@@ -70,15 +71,13 @@ public class Logic {
 
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void pcTurn(String currentPlayer) {
+    public int pcTurn(String currentPlayer) {
         //random PC
         /*List<Integer> emptyTable = emptyIndexies(getTable());
         if(emptyTable.size()>0){
             int turn = (int) (Math.random() * emptyTable.size());
             table[emptyTable.get(turn)].setText(currentPlayer);
         }*/
-
-        moves.clear();
         if (currentPlayer.equals("X")) {
             aiPlayer = "X";
             huPlayer = "O";
@@ -86,14 +85,13 @@ public class Logic {
             aiPlayer = "O";
             huPlayer = "X";
         }
-        CharSequence[] origBoard = getTable();
-        int bestSpot = minimax(origBoard, aiPlayer);
-        table[bestSpot].setText(currentPlayer);
+        int bestSpot = minimax(table, aiPlayer);
+        return bestSpot;
 
     }
 
     private String switchPlayer(String player) {
-        if (player.equals("X")) {
+        if (player.equals('X')) {
             player = "O";
         } else {
             player = "X";
@@ -101,15 +99,14 @@ public class Logic {
         return player;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private int minimax(CharSequence[] newBoard, String player) {
-        int result = -1;
-        //счетчик глубины ходов
-        int count = 0;
-        int firstMoveIndex = 0;
+    private int minimax(String[] newBoard, String player) {
         List<Integer> movesLeft = getEmptyIndexies(newBoard);
-        // активация защиты, если следующий ход приведет к победе человека, то нужно занять эту клетку
+        // акттвация атаки или защиты, если следующий ход привдеет к победе компьютера, то знамаем эту клетку. Если же нет, то проверяем , не победит ли человек
         for (int def = 0; def < movesLeft.size(); def++) {
+            newBoard[movesLeft.get(def)] = aiPlayer;
+            if (checkTableForWin(newBoard, aiPlayer)) {
+                return movesLeft.get(def);
+            }
             newBoard[movesLeft.get(def)] = huPlayer;
             if (checkTableForWin(newBoard, huPlayer)) {
                 return movesLeft.get(def);
@@ -120,80 +117,19 @@ public class Logic {
         if (newBoard[4].equals("")) {
             return 4;
         }
-        // берем по одной свободной ячкйке outerLoop, затем углубляемся с innerLoop
-        for (int outerLoop = 0; outerLoop < movesLeft.size(); outerLoop++) {
-            count++;
-            newBoard[movesLeft.get(outerLoop)] = player;
-            firstMoveIndex = movesLeft.get(outerLoop);
-            // проверяем, если хорд приводит к результату, то записываем его в moves
-            if (checkTableForWin(newBoard, huPlayer)) {
-                moves.add(new Move(firstMoveIndex, -10, count));
-                newBoard[movesLeft.get(outerLoop)] = "";
-                continue;
-            } else if (checkTableForWin(newBoard, aiPlayer)) {
-                moves.add(new Move(firstMoveIndex, 10, count));
-                newBoard[movesLeft.get(outerLoop)] = "";
-                continue;
-                // если первый ход привел к заполнению поля, записываем его
-            } else if (getEmptyIndexies(newBoard).size() == 0) {
-                moves.add(new Move(firstMoveIndex, 0, count));
-                newBoard[movesLeft.get(outerLoop)] = "";
-            } else {
 
-                player = switchPlayer(player);
-                // создаем лист вложенных ходов, после добавления первого хода
-                List<Integer> innerMoves = getEmptyIndexies(newBoard);
-                for (int innerLoop = 0; innerLoop < innerMoves.size(); innerLoop++) {
-                    count++;
-                    newBoard[innerMoves.get(innerLoop)] = player;
-                    if (checkTableForWin(newBoard, huPlayer)) {
-                        moves.add(new Move(firstMoveIndex, -10, count));
-                        newBoard[movesLeft.get(outerLoop)] = "";
-                        player = switchPlayer(player);
-                        break;
-                    } else if (checkTableForWin(newBoard, aiPlayer)) {
-                        moves.add(new Move(firstMoveIndex, 10, count));
-                        newBoard[movesLeft.get(outerLoop)] = "";
-                        player = switchPlayer(player);
-                        break;
-                    } else if (getEmptyIndexies(newBoard).size() == 0) {
-                        moves.add(new Move(firstMoveIndex, 0, count));
-                    } else {
-                        player = switchPlayer(player);
-                    }
-                }
-                //зачищаем сделанные ходы
-                count = 0;
-                for (int o : innerMoves) {
-                    newBoard[o] = "";
-                }
-                newBoard[movesLeft.get(outerLoop)] = "";
-                player = switchPlayer(player);
-            }
-        }
-        int min = 10000;
-        Move resultMovie = new Move();
-        List<Move> newMoves = moves.stream().filter(v -> v.score == 10).collect(Collectors.toList());
-        // если не найдены победные ходы, то берет первый ход из доступных
-        if (newMoves.size() == 0) {
-            resultMovie.index = getEmptyIndexies(newBoard).get(0);
-        } else {
-            for (Move move : newMoves) {
-                if (move.moves < min) {
-                    min = move.moves;
-                    resultMovie = move;
-                }
-            }
-        }
-        return resultMovie.index;
+        return getEmptyIndexies(newBoard).get(0);
     }
 
-    public CharSequence[] getTable() {
-        CharSequence[] result = new CharSequence[9];
+    public String[] getTable() {
+        /*CharSequence[] result = new CharSequence[9];
         for (int i = 0; i < table.length; i++) {
             result[i] = table[i].getText();
-        }
-        return result;
+        }*/
+        return table;
     }
 
+    public void putSymbol(int indexOf, String currentPlayer) {
+        table[indexOf] = currentPlayer;
+    }
 }

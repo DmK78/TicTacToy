@@ -10,16 +10,20 @@ import android.widget.Button;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private Logic logic;
     private final String SAVED_TABLE = "saved_table";
     private boolean enemyHuman = true;
-    private Button[] cells;
+    private List<Button> cells = new ArrayList<>();
+    private String[] characters = new String[]{"", "", "", "", "", "", "", "", ""};
     private Switch switcher;
     private String currentPlayer = "X";
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,15 +40,21 @@ public class MainActivity extends AppCompatActivity {
         switcher = findViewById(R.id.switchEnemy);
         switcher.setChecked(enemyHuman);
 
-        cells = new Button[]{button11, button12, button13, button21, button22, button23, button31, button32, button33};
+        cells.add(button11);
+        cells.add(button12);
+        cells.add(button13);
+        cells.add(button21);
+        cells.add(button22);
+        cells.add(button23);
+        cells.add(button31);
+        cells.add(button32);
+        cells.add(button33);
         if (savedInstanceState != null) {
             CharSequence[] symbols = savedInstanceState.getCharSequenceArray(SAVED_TABLE);
-            for (int i = 0; i < symbols.length; i++) {
-                cells[i].setText(symbols[i]);
-            }
+
         }
 
-        logic = new Logic(cells);
+        logic = new Logic(characters);
     }
 
     private void showAlert(String msg) {
@@ -54,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        //outState.putCharSequenceArray(SAVED_TABLE, logic.getSymbols());
         outState.putCharSequenceArray(SAVED_TABLE, logic.getSymbols());
     }
 
@@ -67,10 +78,10 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean checkWinner() {
         boolean result = false;
-        if (logic.checkTableForWin(logic.getTable(),"X")) {
+        if (logic.checkTableForWin(null, "X")) {
             this.showAlert("Победили Крестики! Начните новую Игру!");
             result = true;
-        } else if (logic.checkTableForWin(logic.getTable(),"O")) {
+        } else if (logic.checkTableForWin(null, "O")) {
             this.showAlert("Победили Нолики! Начните новую Игру!");
             result = true;
         }
@@ -83,8 +94,9 @@ public class MainActivity extends AppCompatActivity {
     public void answer(View view) {
         Button button = (Button) view;
         if (this.checkState() && !button.getText().equals("O") && !button.getText().equals("X") && !checkWinner()) {
-                button.setText(currentPlayer);
-                changePlayer();
+            button.setText(currentPlayer.toString());
+            logic.putSymbol(cells.indexOf(button), currentPlayer);
+            changePlayer();
             if (!checkWinner()) {
                 checkState();
             }
@@ -98,7 +110,11 @@ public class MainActivity extends AppCompatActivity {
     @TargetApi(Build.VERSION_CODES.N)
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void pcTurn() {
-        logic.pcTurn(currentPlayer);
+        Button button = cells.get((logic.pcTurn(currentPlayer)));
+        button.setText(currentPlayer);
+        logic.putSymbol(cells.indexOf(button), currentPlayer);
+
+
         if (!checkWinner() && checkState()) {
             checkState();
         }
@@ -116,6 +132,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void newGame(View view) {
         logic.clearTable();
+        for (Button button : cells) {
+            button.setText("");
+        }
         currentPlayer = "X";
     }
 
