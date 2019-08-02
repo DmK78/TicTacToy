@@ -93,8 +93,8 @@ public class MainActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void answer(View view) {
         Button button = (Button) view;
-        if (this.checkState() && !button.getText().equals("O") && !button.getText().equals("X") && !checkWinner()) {
-            button.setText(currentPlayer.toString());
+        if (this.checkState() && !checkWinner() && "".equals(button.getText())) {
+            button.setText(currentPlayer);
             logic.putSymbol(cells.indexOf(button), currentPlayer);
             changePlayer();
             if (!checkWinner()) {
