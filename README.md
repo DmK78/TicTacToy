@@ -24,6 +24,8 @@ else
 иначе
 4. Занимаем первую свободную ячейку.
 
+
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/DmK78/TicTacToy/master/app/src/main/res/drawable/scr.PNG">
 </p>
