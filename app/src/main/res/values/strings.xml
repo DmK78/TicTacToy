@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">TicTacToy</string>
-    <string name="title">Tic Tac Toy</string>
+    <string name="app_name">TicTacToe</string>
+    <string name="title">Tic Tac Toe</string>
     <string name="switch_enemy_pc_human">Enemy: PC | Human</string>
     <string name="button_new_game">NEW GAME</string>
+    <string name="title_pc_dummy_smart">PC: Dummy | Smart</string>
 </resources>

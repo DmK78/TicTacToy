@@ -11,7 +11,6 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -20,8 +19,9 @@ public class MainActivity extends AppCompatActivity {
     private boolean enemyHuman = true;
     private List<Button> cells = new ArrayList<>();
     private String[] characters = new String[]{"", "", "", "", "", "", "", "", ""};
-    private Switch switcher;
+    private Switch switcherPcHuman;
     private String currentPlayer = "X";
+    private Switch switcherPcSmart;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -37,8 +37,10 @@ public class MainActivity extends AppCompatActivity {
         Button button31 = findViewById(R.id.button31);
         Button button32 = findViewById(R.id.button32);
         Button button33 = findViewById(R.id.button33);
-        switcher = findViewById(R.id.switchEnemy);
-        switcher.setChecked(enemyHuman);
+        switcherPcSmart = findViewById(R.id.switchPcSmart);
+        switcherPcHuman = findViewById(R.id.switchEnemy);
+        switcherPcHuman.setChecked(enemyHuman);
+
 
         cells.add(button11);
         cells.add(button12);
@@ -64,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        //outState.putCharSequenceArray(SAVED_TABLE, logic.getSymbols());
         outState.putCharSequenceArray(SAVED_TABLE, logic.getSymbols());
     }
 
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
         if (this.checkState() && !checkWinner() && "".equals(button.getText())) {
             button.setText(currentPlayer);
             logic.putSymbol(cells.indexOf(button), currentPlayer);
+
             changePlayer();
             if (!checkWinner()) {
                 checkState();
@@ -110,7 +112,8 @@ public class MainActivity extends AppCompatActivity {
     @TargetApi(Build.VERSION_CODES.N)
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void pcTurn() {
-        Button button = cells.get((logic.pcTurn(currentPlayer)));
+
+        Button button = cells.get((logic.pcTurn(currentPlayer, switcherPcSmart.isChecked())));
         button.setText(currentPlayer);
         logic.putSymbol(cells.indexOf(button), currentPlayer);
 
@@ -141,10 +144,10 @@ public class MainActivity extends AppCompatActivity {
     public void switchEnemy(View view) {
         if (enemyHuman) {
             enemyHuman = false;
-            switcher.setChecked(false);
+            switcherPcHuman.setChecked(false);
         } else {
             enemyHuman = true;
-            switcher.setChecked(true);
+            switcherPcHuman.setChecked(true);
 
         }
 

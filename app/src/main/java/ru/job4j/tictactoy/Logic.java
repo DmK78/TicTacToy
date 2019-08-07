@@ -71,22 +71,34 @@ public class Logic {
 
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public int pcTurn(String currentPlayer) {
-        //random PC
-        /*List<Integer> emptyTable = emptyIndexies(getTable());
-        if(emptyTable.size()>0){
-            int turn = (int) (Math.random() * emptyTable.size());
-            table[emptyTable.get(turn)].setText(currentPlayer);
-        }*/
-        if (currentPlayer.equals("X")) {
-            aiPlayer = "X";
-            huPlayer = "O";
-        } else {
-            aiPlayer = "O";
-            huPlayer = "X";
+    public int pcTurn(String currentPlayer, boolean pcSmart) {
+        int result=-1;
+        if(!pcSmart){
+            //random PC
+            List<Integer> emptyTable = getEmptyIndexies(getTable());
+            if(emptyTable.size()>0){
+                int turn = (int) (Math.random() * emptyTable.size());
+                result = emptyTable.get(turn);
+            }
+
+        } else
+        {
+
+            if (currentPlayer.equals("X")) {
+                aiPlayer = "X";
+                huPlayer = "O";
+            } else {
+                aiPlayer = "O";
+                huPlayer = "X";
+            }
+            result = minimax(table, aiPlayer);
+
+
+
         }
-        int bestSpot = minimax(table, aiPlayer);
-        return bestSpot;
+
+return result;
+
 
     }
 
