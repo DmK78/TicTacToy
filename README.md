@@ -6,12 +6,15 @@ The smart computer algorithm is as follows:
 1. We are looking for a cell that will lead to the victory of the computer, if we find, then we occupy it.
 
 else
+
 2. We are looking for a cell that will lead to human victory, if we find, then we occupy it.
 
 else
+
 3. If the center is not busy, then we occupy it.
 
 else
+
 4. We occupy the first free cell.
 
 
@@ -23,12 +26,15 @@ else
 1. Ищем клетку, которая приведет к победе компьютера, если находим, то занимаем ее.
 
 иначе 
+
 2. Ищем клетку, которая приведет к победе человека, если находим, то занимаем ее.
 
 иначе
+
 3. Если центр не занят, то занимаем его.
 
 иначе
+
 4. Занимаем первую свободную ячейку.
 
 
