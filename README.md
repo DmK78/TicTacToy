@@ -23,6 +23,6 @@ else
 4. Занимаем первую свободную ячейку.
 
 <p align="center">
-  <img width="600" height="200" src="https://raw.githubusercontent.com/DmK78/TicTacToy/master/app/src/main/res/drawable/scr.PNG">
+  <img src="https://raw.githubusercontent.com/DmK78/TicTacToy/master/app/src/main/res/drawable/scr.PNG">
 </p>
 ![alt text](https://raw.githubusercontent.com/DmK78/TicTacToy/master/app/src/main/res/drawable/scr.PNG)
