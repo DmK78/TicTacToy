@@ -1,6 +1,7 @@
 # TicTacToe
 I present to your attention a simple game Tic Tac Toe. You can play with a person or with the computer. The computer can be smart or dummy.
 If the computer is dummy, then it puts the figure randomly.
+
 The smart computer algorithm is as follows:
 1. We are looking for a cell that will lead to the victory of the computer, if we find, then we occupy it.
 else
@@ -12,8 +13,9 @@ else
 
 # Крестики нолики
 
-Представляю Ващему вниманию простую игру Крестики нолики. Играть можно как с человеком так и с компьютером. Компьютер может быть умным или глупым. 
-Если компьютер глупый, то он ставит фигуру методом рандом. Алгоритм умного компьютера заключается в следующем:
+Представляю Ващему вниманию простую игру Крестики нолики. Играть можно как с человеком так и с компьютером. Компьютер может быть умным или глупым. Если компьютер глупый, то он ставит фигуру методом рандом. 
+
+Алгоритм умного компьютера заключается в следующем:
 1. Ищем клетку, которая приведет к победе компьютера, если находим, то занимаем ее.
 иначе 
 2. Ищем клетку, которая приведет к победе человека, если находим, то занимаем ее.
