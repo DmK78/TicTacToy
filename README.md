@@ -25,4 +25,4 @@ else
 <p align="center">
   <img src="https://raw.githubusercontent.com/DmK78/TicTacToy/master/app/src/main/res/drawable/scr.PNG">
 </p>
-![alt text](https://raw.githubusercontent.com/DmK78/TicTacToy/master/app/src/main/res/drawable/scr.PNG)
+
