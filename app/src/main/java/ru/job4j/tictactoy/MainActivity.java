@@ -40,8 +40,6 @@ public class MainActivity extends AppCompatActivity {
         switcherPcSmart = findViewById(R.id.switchPcSmart);
         switcherPcHuman = findViewById(R.id.switchEnemy);
         switcherPcHuman.setChecked(enemyHuman);
-
-
         cells.add(button11);
         cells.add(button12);
         cells.add(button13);
@@ -53,9 +51,7 @@ public class MainActivity extends AppCompatActivity {
         cells.add(button33);
         if (savedInstanceState != null) {
             CharSequence[] symbols = savedInstanceState.getCharSequenceArray(SAVED_TABLE);
-
         }
-
         logic = new Logic(characters);
     }
 
@@ -112,17 +108,12 @@ public class MainActivity extends AppCompatActivity {
     @TargetApi(Build.VERSION_CODES.N)
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void pcTurn() {
-
         Button button = cells.get((logic.pcTurn(currentPlayer, switcherPcSmart.isChecked())));
         button.setText(currentPlayer);
         logic.putSymbol(cells.indexOf(button), currentPlayer);
-
-
         if (!checkWinner() && checkState()) {
             checkState();
         }
-
-
     }
 
     private void changePlayer() {
