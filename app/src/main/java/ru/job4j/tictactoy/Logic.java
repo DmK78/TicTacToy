@@ -69,21 +69,17 @@ public class Logic {
         return result;
     }
 
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public int pcTurn(String currentPlayer, boolean pcSmart) {
         int result=-1;
         if(!pcSmart){
             //random PC
-            List<Integer> emptyTable = getEmptyIndexies(getTable());
+            List<Integer> emptyTable = getEmptyIndexies(table);
             if(emptyTable.size()>0){
                 int turn = (int) (Math.random() * emptyTable.size());
                 result = emptyTable.get(turn);
             }
-
         } else
         {
-
             if (currentPlayer.equals("X")) {
                 aiPlayer = "X";
                 huPlayer = "O";
@@ -91,12 +87,8 @@ public class Logic {
                 aiPlayer = "O";
                 huPlayer = "X";
             }
-            result = minimax(table, aiPlayer);
-
-
-
+            result = getBestTurn(table, aiPlayer);
         }
-
 return result;
 
 
@@ -111,7 +103,7 @@ return result;
         return player;
     }
 
-    private int minimax(String[] newBoard, String player) {
+    private int getBestTurn(String[] newBoard, String player) {
         List<Integer> movesLeft = getEmptyIndexies(newBoard);
         // акттвация атаки или защиты, если следующий ход привдеет к победе компьютера, то знамаем эту клетку. Если же нет, то проверяем , не победит ли человек
         for (int def = 0; def < movesLeft.size(); def++) {
@@ -129,17 +121,9 @@ return result;
         if (newBoard[4].equals("")) {
             return 4;
         }
-
         return getEmptyIndexies(newBoard).get(0);
     }
 
-    public String[] getTable() {
-        /*CharSequence[] result = new CharSequence[9];
-        for (int i = 0; i < table.length; i++) {
-            result[i] = table[i].getText();
-        }*/
-        return table;
-    }
 
     public void putSymbol(int indexOf, String currentPlayer) {
         table[indexOf] = currentPlayer;

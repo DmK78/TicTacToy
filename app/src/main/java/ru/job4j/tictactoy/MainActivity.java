@@ -23,8 +23,6 @@ public class MainActivity extends AppCompatActivity {
     private String currentPlayer = "X";
     private Switch switcherPcSmart;
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -85,12 +83,9 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
-
-    @TargetApi(Build.VERSION_CODES.N)
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public void answer(View view) {
         Button button = (Button) view;
-        if (this.checkState() && !checkWinner() && "".equals(button.getText())) {
+        if (this.checkState() && !checkWinner() && button.getText() != null && "".equals(button.getText())) {
             button.setText(currentPlayer);
             logic.putSymbol(cells.indexOf(button), currentPlayer);
 
@@ -105,8 +100,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.N)
-    @RequiresApi(api = Build.VERSION_CODES.N)
+
     private void pcTurn() {
         Button button = cells.get((logic.pcTurn(currentPlayer, switcherPcSmart.isChecked())));
         button.setText(currentPlayer);
@@ -139,7 +133,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             enemyHuman = true;
             switcherPcHuman.setChecked(true);
-
         }
 
 
