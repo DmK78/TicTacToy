@@ -1,7 +1,13 @@
 package ru.job4j.tictactoy;
 
 import android.annotation.TargetApi;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.media.MediaPlayer;
 import android.os.Build;
+import android.os.IBinder;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,6 +16,7 @@ import android.widget.Button;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +29,9 @@ public class MainActivity extends AppCompatActivity {
     private Switch switcherPcHuman;
     private String currentPlayer = "X";
     private Switch switcherPcSmart;
+    private boolean mIsBound = false;
+
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
             CharSequence[] symbols = savedInstanceState.getCharSequenceArray(SAVED_TABLE);
         }
         logic = new Logic(characters);
+        startService(new Intent(this, MyService.class));
     }
 
     private void showAlert(String msg) {
@@ -64,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean checkState() {
+     playSound(R.raw.click);
         boolean gap = this.logic.hasGap();
         if (!gap) {
             this.showAlert("Все поля запонены! Начните новую Игру!");
@@ -79,6 +91,9 @@ public class MainActivity extends AppCompatActivity {
         } else if (logic.checkTableForWin(null, "O")) {
             this.showAlert("Победили Нолики! Начните новую Игру!");
             result = true;
+        }
+        if(result){
+            playSound(R.raw.applause);
         }
         return result;
     }
@@ -137,4 +152,25 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        stopService(new Intent(this, MyService.class)); // остановить песню
+    }
+
+    // развернули приложение
+    @Override
+    public void onResume() {
+        super.onResume();
+        startService(new Intent(this, MyService.class)); // запустить песню
+    }
+
+    private void  playSound(int uri){
+        MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
+        mediaPlayer.start();
+
+    }
+
+
 }
