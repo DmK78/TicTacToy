@@ -105,7 +105,7 @@ return result;
 
     private int getBestTurn(String[] newBoard, String player) {
         List<Integer> movesLeft = getEmptyIndexies(newBoard);
-        // акттвация атаки или защиты, если следующий ход привдеет к победе компьютера, то знамаем эту клетку. Если же нет, то проверяем , не победит ли человек
+        // акттвация атаки или защиты, если следующий ход привдеет к победе компьютера, то занимаем эту клетку. Если же нет, то проверяем , не победит ли человек
         for (int def = 0; def < movesLeft.size(); def++) {
             newBoard[movesLeft.get(def)] = aiPlayer;
             if (checkTableForWin(newBoard, aiPlayer)) {

@@ -6,8 +6,8 @@ import android.media.MediaPlayer;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
-public class MyService extends Service {
-    private static final String TAG = "MyService";
+public class MusicService extends Service {
+    private static final String TAG = "MusicService";
     MediaPlayer player;
 
     @Override
